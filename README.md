@@ -173,20 +173,61 @@ lego_architect/
 ### Running Tests
 
 ```bash
-pytest
+# Quick test (all tests)
+./test.sh
+
+# Or individually:
+python3 quick_test.py           # Core functionality (6 tests)
+python3 test_llm_engine.py      # LLM structure (6 tests)
+python3 test_orchestrator.py    # Orchestrator (7 tests)
+pytest tests/                   # Unit tests (37 tests)
+
+# Or use Make:
+make test
+```
+
+### Running Demos
+
+```bash
+# Manual building demo (no API key needed)
+python3 demo.py
+
+# AI-powered demo (requires API key)
+python3 demo_llm.py
+
+# Orchestrator demo (requires API key)
+python3 demo_orchestrator.py
+
+# Or use Make:
+make demo
+make demo-llm
+make demo-orchestrator
 ```
 
 ### Code Quality
 
 ```bash
 # Format code
-black lego_architect/
+make format
+# or: black lego_architect/ tests/ *.py
 
 # Lint
-ruff lego_architect/
+make lint
+# or: ruff lego_architect/
 
 # Type check
 mypy lego_architect/
+```
+
+### Docker Support
+
+```bash
+# Build and run in Docker
+make docker-build
+make docker-run
+
+# Or directly:
+./run_docker.sh
 ```
 
 ## Technical Details
