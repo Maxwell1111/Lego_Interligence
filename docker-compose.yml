@@ -1,0 +1,19 @@
+version: '3.8'
+
+services:
+  lego-architect:
+    build: .
+    container_name: lego-architect
+    volumes:
+      - .:/app
+      - builds:/builds
+    environment:
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
+      - DEFAULT_MODEL=${DEFAULT_MODEL:-claude-sonnet-4-20250514}
+      - REFINEMENT_MODEL=${REFINEMENT_MODEL:-claude-haiku-3-5-20241022}
+    stdin_open: true
+    tty: true
+    command: /bin/bash
+
+volumes:
+  builds:

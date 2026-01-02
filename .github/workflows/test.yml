@@ -1,0 +1,106 @@
+name: Test
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test-ubuntu:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.11", "3.12"]
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ matrix.python-version }}
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -e .
+
+    - name: Run core tests
+      run: |
+        python quick_test.py
+
+    - name: Run LLM engine tests
+      run: |
+        python test_llm_engine.py
+
+    - name: Run orchestrator tests
+      run: |
+        python test_orchestrator.py
+
+    - name: Run pytest (if available)
+      run: |
+        pip install pytest
+        pytest tests/ -v || true
+
+  test-macos:
+    runs-on: macos-latest
+    strategy:
+      matrix:
+        python-version: ["3.11", "3.12"]
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ matrix.python-version }}
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -e .
+
+    - name: Run core tests
+      run: |
+        python quick_test.py
+
+    - name: Run LLM engine tests
+      run: |
+        python test_llm_engine.py
+
+    - name: Run orchestrator tests
+      run: |
+        python test_orchestrator.py
+
+  test-windows:
+    runs-on: windows-latest
+    strategy:
+      matrix:
+        python-version: ["3.11", "3.12"]
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ matrix.python-version }}
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -e .
+
+    - name: Run core tests
+      run: |
+        python quick_test.py
+
+    - name: Run LLM engine tests
+      run: |
+        python test_llm_engine.py
+
+    - name: Run orchestrator tests
+      run: |
+        python test_orchestrator.py
