@@ -9,6 +9,8 @@ This demonstrates the core functionality without requiring the LLM:
 - Exporting to LDraw format
 """
 
+import sys
+
 from lego_architect.core.data_structures import (
     BuildState,
     PartDimensions,
@@ -17,6 +19,19 @@ from lego_architect.core.data_structures import (
 )
 from lego_architect.patterns import PatternLibrary
 from lego_architect.validation import PhysicalValidator
+
+
+def safe_input(prompt="Press Enter to continue..."):
+    """Safely handle input in both interactive and non-interactive environments."""
+    if not sys.stdin.isatty():
+        # Non-interactive environment, skip input
+        print(f"[Auto-continuing in non-interactive mode]")
+        return ""
+    try:
+        return input(prompt)
+    except EOFError:
+        print(f"\n[Auto-continuing]")
+        return ""
 
 
 def demo_simple_tower():
@@ -353,7 +368,7 @@ def main():
     for i, demo in enumerate(demos, 1):
         demo()
         if i < len(demos):
-            input(f"Press Enter to continue to Demo {i+1}...")
+            safe_input(f"Press Enter to continue to Demo {i+1}...")
             print()
 
     print("=" * 70)

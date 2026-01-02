@@ -20,6 +20,19 @@ from lego_architect.llm import LLMEngine
 from lego_architect.validation import PhysicalValidator
 
 
+def safe_input(prompt="Press Enter to continue..."):
+    """Safely handle input in both interactive and non-interactive environments."""
+    if not sys.stdin.isatty():
+        # Non-interactive environment, skip input
+        print(f"[Auto-continuing in non-interactive mode]")
+        return ""
+    try:
+        return input(prompt)
+    except EOFError:
+        print(f"\n[Auto-continuing]")
+        return ""
+
+
 def check_api_key():
     """Check if API key is configured."""
     if not config.ANTHROPIC_API_KEY:
@@ -261,7 +274,7 @@ def main():
     for demo in demos:
         try:
             demo()
-            input("\nPress Enter to continue...")
+            safe_input("\nPress Enter to continue...")
         except KeyboardInterrupt:
             print("\n\n👋 Demo interrupted by user")
             return 0
