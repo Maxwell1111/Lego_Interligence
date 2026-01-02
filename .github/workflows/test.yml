@@ -28,20 +28,20 @@ jobs:
 
     - name: Run core tests
       run: |
-        python quick_test.py
+        python3 quick_test.py
 
     - name: Run LLM engine tests
       run: |
-        python test_llm_engine.py
+        python3 test_llm_engine.py
 
     - name: Run orchestrator tests
       run: |
-        python test_orchestrator.py
+        python3 test_orchestrator.py
 
-    - name: Run pytest (if available)
+    - name: Run unit tests with pytest
       run: |
         pip install pytest
-        pytest tests/ -v || true
+        pytest tests/ -v
 
   test-macos:
     runs-on: macos-latest
@@ -64,15 +64,15 @@ jobs:
 
     - name: Run core tests
       run: |
-        python quick_test.py
+        python3 quick_test.py
 
     - name: Run LLM engine tests
       run: |
-        python test_llm_engine.py
+        python3 test_llm_engine.py
 
     - name: Run orchestrator tests
       run: |
-        python test_orchestrator.py
+        python3 test_orchestrator.py
 
   test-windows:
     runs-on: windows-latest
