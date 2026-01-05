@@ -129,16 +129,25 @@ async def generate_build(request: GenerateRequest):
         # Create orchestrator and generate
         orchestrator = BuildOrchestrator()
 
-        if clarifications:
-            enriched_prompt = orchestrator.enrich_prompt(request.prompt, clarifications)
-
-        # Generate the build
+        # Generate the build (orchestrator creates its own BuildState)
         result = orchestrator.generate_build(
-            user_prompt=enriched_prompt,
-            build_state=build_state,
+            prompt=enriched_prompt,
+            clarifications=clarifications if clarifications else None,
             max_refinement_iterations=3,
-            auto_refine=True,
+            auto_confirm_refinement=True,
         )
+
+        # Copy generated parts to the web app's shared build state
+        if result.build_state and result.build_state.parts:
+            for part in result.build_state.parts:
+                build_state.add_part(
+                    part_id=part.part_id,
+                    part_name=part.part_name,
+                    color=part.color,
+                    position=part.position,
+                    rotation=part.rotation,
+                    dimensions=part.dimensions,
+                )
 
         # Build metrics response
         metrics = None
