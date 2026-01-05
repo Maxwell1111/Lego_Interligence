@@ -30,7 +30,7 @@ class Config:
     )
 
     # Generation Settings
-    DEFAULT_MODEL: str = os.getenv("DEFAULT_MODEL", "claude-sonnet-4-20250514")
+    DEFAULT_MODEL: str = os.getenv("DEFAULT_MODEL", "claude-opus-4-5-20251101")
     REFINEMENT_MODEL: str = os.getenv("REFINEMENT_MODEL", "claude-haiku-3-5-20241022")
     MAX_TOKENS: int = int(os.getenv("MAX_TOKENS", "8192"))
 

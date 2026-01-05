@@ -9,7 +9,7 @@ services:
       - builds:/builds
     environment:
       - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
-      - DEFAULT_MODEL=${DEFAULT_MODEL:-claude-sonnet-4-20250514}
+      - DEFAULT_MODEL=${DEFAULT_MODEL:-claude-opus-4-5-20251101}
       - REFINEMENT_MODEL=${REFINEMENT_MODEL:-claude-haiku-3-5-20241022}
     stdin_open: true
     tty: true
