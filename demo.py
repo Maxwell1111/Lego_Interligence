@@ -377,18 +377,27 @@ def main():
     print()
     print("🎉 Core functionality is working!")
     print()
-    print("Next steps to try AI-powered generation:")
-    print("  1. Set up .env file with your Anthropic API key:")
-    print("     cp .env.example .env")
-    print("     # Then edit .env and add: ANTHROPIC_API_KEY=your_key_here")
-    print()
-    print("  2. Run AI-powered demos:")
-    print("     python3 demo_llm.py")
-    print("     python3 demo_orchestrator.py")
-    print()
-    print("  3. Run all tests:")
-    print("     ./test.sh")
-    print("     # or: make test")
+
+    # Only show AI instructions if AI features are enabled
+    from lego_architect.config import Config
+    if Config.ENABLE_AI_FEATURES:
+        print("Next steps to try AI-powered generation:")
+        print("  1. Set up .env file with your Anthropic API key:")
+        print("     cp .env.example .env")
+        print("     # Then edit .env and add: ANTHROPIC_API_KEY=your_key_here")
+        print()
+        print("  2. Run AI-powered demos:")
+        print("     python3 demo_llm.py")
+        print("     python3 demo_orchestrator.py")
+        print()
+    else:
+        print("AI features are disabled. Manual building and patterns are available.")
+        print("To enable AI features, set ENABLE_AI_FEATURES=true in your .env file.")
+        print()
+
+    print("Run all tests:")
+    print("  ./test.sh")
+    print("  # or: make test")
     print()
 
 
