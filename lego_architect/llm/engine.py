@@ -14,7 +14,7 @@ from typing import Any, Dict, List, Optional
 
 from anthropic import Anthropic
 
-from lego_architect.config import config
+from lego_architect.config import config, Config
 from lego_architect.core.data_structures import (
     BuildState,
     PartDimensions,
@@ -54,14 +54,29 @@ class LLMEngine:
 
     def __init__(self) -> None:
         """Initialize LLM engine."""
-        self.client = Anthropic(api_key=config.ANTHROPIC_API_KEY)
+        # Check if AI features are available before initializing client
+        self._ai_available = Config.is_ai_available()
+
+        if self._ai_available:
+            self.client = Anthropic(api_key=config.ANTHROPIC_API_KEY)
+        else:
+            self.client = None
+
         self.validator = PhysicalValidator()
 
-        # Build cached system prompt
-        self.system_prompt_cached = self._build_cached_system_prompt()
+        # Build cached system prompt (only if AI available)
+        self.system_prompt_cached = self._build_cached_system_prompt() if self._ai_available else []
 
         # Part database (simplified for MVP)
         self.part_catalog = self._build_part_catalog()
+
+    def _check_ai_available(self) -> None:
+        """Raise an error if AI features are not available."""
+        if not self._ai_available:
+            raise RuntimeError(
+                "AI features are not available. "
+                "Ensure ENABLE_AI_FEATURES=true and ANTHROPIC_API_KEY is set."
+            )
 
     def _build_part_catalog(self) -> Dict[str, Dict]:
         """
@@ -429,7 +444,12 @@ When given a build description:
 
         Returns:
             LLMResult with generation statistics
+
+        Raises:
+            RuntimeError: If AI features are not available
         """
+        self._check_ai_available()
+
         user_prompt = f"""Create a LEGO build: "{prompt}"
 
 Think through your design:
@@ -501,7 +521,12 @@ Remember: Heights are in PLATES (3 plates = 1 brick).
 
         Returns:
             LLMResult with refinement statistics
+
+        Raises:
+            RuntimeError: If AI features are not available
         """
+        self._check_ai_available()
+
         # Build context about current state
         context = f"""Current build has {len(build_state.parts)} parts.
 

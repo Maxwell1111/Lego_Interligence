@@ -38,13 +38,22 @@ class Config:
     ENABLE_PROMPT_CACHING: bool = os.getenv("ENABLE_PROMPT_CACHING", "true").lower() == "true"
     CACHE_TTL_MINUTES: int = int(os.getenv("CACHE_TTL_MINUTES", "30"))
 
+    # Feature Flags
+    ENABLE_AI_FEATURES: bool = os.getenv("ENABLE_AI_FEATURES", "true").lower() == "true"
+
     @classmethod
     def validate(cls) -> None:
         """Validate required configuration."""
-        if not cls.ANTHROPIC_API_KEY:
+        if cls.ENABLE_AI_FEATURES and not cls.ANTHROPIC_API_KEY:
             raise ValueError(
-                "ANTHROPIC_API_KEY not set. Please set it in .env file or environment variable."
+                "ANTHROPIC_API_KEY not set. Please set it in .env file or environment variable, "
+                "or set ENABLE_AI_FEATURES=false to disable AI features."
             )
+
+    @classmethod
+    def is_ai_available(cls) -> bool:
+        """Check if AI features are available and properly configured."""
+        return cls.ENABLE_AI_FEATURES and bool(cls.ANTHROPIC_API_KEY)
 
 
 # Global config instance

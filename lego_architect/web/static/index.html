@@ -368,13 +368,110 @@
         .tab-content.active {
             display: block;
         }
+
+        .ai-status {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 12px;
+            background: #0f3460;
+            border-radius: 4px;
+            margin-bottom: 15px;
+            font-size: 12px;
+        }
+
+        .ai-status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+        }
+
+        .ai-status-dot.available {
+            background: #4caf50;
+        }
+
+        .ai-status-dot.unavailable {
+            background: #ff9800;
+        }
+
+        .ai-status-dot.disabled {
+            background: #666;
+        }
+
+        .ai-disabled-notice {
+            background: rgba(255, 152, 0, 0.1);
+            border: 1px solid #ff9800;
+            border-radius: 4px;
+            padding: 10px;
+            font-size: 12px;
+            color: #ff9800;
+            margin-bottom: 15px;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        textarea {
+            width: 100%;
+            padding: 8px;
+            border: none;
+            border-radius: 4px;
+            background: #1a1a2e;
+            color: #fff;
+            margin-bottom: 10px;
+            font-size: 14px;
+            font-family: inherit;
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        textarea:focus {
+            outline: 2px solid #e94560;
+        }
+
+        .generating {
+            opacity: 0.7;
+            pointer-events: none;
+        }
+
+        .generating::after {
+            content: ' ...';
+            animation: dots 1.5s infinite;
+        }
+
+        @keyframes dots {
+            0%, 20% { content: ' .'; }
+            40% { content: ' ..'; }
+            60%, 100% { content: ' ...'; }
+        }
+
+        .metrics {
+            font-size: 11px;
+            color: #888;
+            margin-top: 10px;
+            padding: 8px;
+            background: #1a1a2e;
+            border-radius: 4px;
+        }
+
+        .metrics-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 2px 0;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="sidebar">
             <h1>LEGO Architect</h1>
-            <h2>Build without LLM</h2>
+            <h2>AI-Powered LEGO Builder</h2>
+
+            <div class="ai-status" id="ai-status">
+                <div class="ai-status-dot" id="ai-status-dot"></div>
+                <span id="ai-status-text">Checking AI status...</span>
+            </div>
 
             <div class="stats">
                 <div class="stat">
@@ -388,8 +485,45 @@
             </div>
 
             <div class="tabs">
+                <button class="tab" data-tab="ai" id="ai-tab-btn">AI Generate</button>
                 <button class="tab active" data-tab="patterns">Patterns</button>
                 <button class="tab" data-tab="manual">Manual</button>
+            </div>
+
+            <div id="ai-tab" class="tab-content">
+                <div class="ai-disabled-notice hidden" id="ai-disabled-notice">
+                    AI features are currently unavailable. Use Patterns or Manual tabs to build.
+                </div>
+                <div class="section" id="ai-generate-section">
+                    <h3>Generate with AI</h3>
+                    <label>Describe your build</label>
+                    <textarea id="ai-prompt" placeholder="e.g., A small red house with a blue roof and a chimney"></textarea>
+                    <div class="row">
+                        <div>
+                            <label>Size</label>
+                            <select id="ai-size">
+                                <option value="">Auto</option>
+                                <option value="Small (10-30 parts)">Small</option>
+                                <option value="Medium (50-100 parts)" selected>Medium</option>
+                                <option value="Large (150+ parts)">Large</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label>Style</label>
+                            <select id="ai-style">
+                                <option value="">Auto</option>
+                                <option value="Simple/minimalist">Simple</option>
+                                <option value="Detailed/realistic">Detailed</option>
+                                <option value="Creative/artistic">Creative</option>
+                            </select>
+                        </div>
+                    </div>
+                    <label>
+                        <input type="checkbox" id="ai-clear" checked> Clear existing build
+                    </label>
+                    <button onclick="generateWithAI()" id="ai-generate-btn">Generate Build</button>
+                    <div id="ai-metrics" class="metrics hidden"></div>
+                </div>
             </div>
 
             <div id="patterns-tab" class="tab-content active">
@@ -971,9 +1105,115 @@
             }
         }
 
+        // AI Status tracking
+        let aiAvailable = false;
+
+        async function checkAIStatus() {
+            try {
+                const res = await fetch('/api/generate/status');
+                const status = await res.json();
+
+                const dot = document.getElementById('ai-status-dot');
+                const text = document.getElementById('ai-status-text');
+                const notice = document.getElementById('ai-disabled-notice');
+                const section = document.getElementById('ai-generate-section');
+
+                if (status.ai_available) {
+                    dot.className = 'ai-status-dot available';
+                    text.textContent = `AI Ready (${status.model || 'Claude'})`;
+                    aiAvailable = true;
+                    notice.classList.add('hidden');
+                    section.classList.remove('hidden');
+                } else if (status.ai_enabled) {
+                    dot.className = 'ai-status-dot unavailable';
+                    text.textContent = 'AI Enabled (API key missing)';
+                    aiAvailable = false;
+                    notice.textContent = status.message;
+                    notice.classList.remove('hidden');
+                    section.classList.add('hidden');
+                } else {
+                    dot.className = 'ai-status-dot disabled';
+                    text.textContent = 'AI Disabled';
+                    aiAvailable = false;
+                    notice.textContent = status.message;
+                    notice.classList.remove('hidden');
+                    section.classList.add('hidden');
+                }
+            } catch (e) {
+                const dot = document.getElementById('ai-status-dot');
+                const text = document.getElementById('ai-status-text');
+                dot.className = 'ai-status-dot unavailable';
+                text.textContent = 'AI Status Unknown';
+                aiAvailable = false;
+            }
+        }
+
+        async function generateWithAI() {
+            if (!aiAvailable) {
+                showToast('AI features are not available', 'error');
+                return;
+            }
+
+            const prompt = document.getElementById('ai-prompt').value.trim();
+            if (!prompt) {
+                showToast('Please enter a description', 'error');
+                return;
+            }
+
+            const btn = document.getElementById('ai-generate-btn');
+            const metricsDiv = document.getElementById('ai-metrics');
+            btn.classList.add('generating');
+            btn.textContent = 'Generating';
+            metricsDiv.classList.add('hidden');
+
+            try {
+                const data = {
+                    prompt: prompt,
+                    size: document.getElementById('ai-size').value || null,
+                    style: document.getElementById('ai-style').value || null,
+                    clear_existing: document.getElementById('ai-clear').checked
+                };
+
+                const res = await fetch('/api/generate', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+
+                const result = await res.json();
+
+                if (result.success) {
+                    showToast(`Build generated: ${result.part_count} parts`);
+                    fetchBuild();
+
+                    // Show metrics if available
+                    if (result.metrics) {
+                        metricsDiv.innerHTML = `
+                            <div class="metrics-item"><span>Duration:</span><span>${result.metrics.duration_seconds?.toFixed(1) || '?'}s</span></div>
+                            <div class="metrics-item"><span>Tokens:</span><span>${result.metrics.total_tokens?.toLocaleString() || '?'}</span></div>
+                            <div class="metrics-item"><span>Cached:</span><span>${result.metrics.cached_tokens?.toLocaleString() || '0'}</span></div>
+                            <div class="metrics-item"><span>Est. Cost:</span><span>$${result.metrics.total_cost_usd?.toFixed(4) || '?'}</span></div>
+                        `;
+                        metricsDiv.classList.remove('hidden');
+                    }
+                } else {
+                    showToast(result.message || 'Generation failed', 'error');
+                    if (result.errors?.length) {
+                        console.error('Generation errors:', result.errors);
+                    }
+                }
+            } catch (e) {
+                showToast('Failed to generate build: ' + e.message, 'error');
+            } finally {
+                btn.classList.remove('generating');
+                btn.textContent = 'Generate Build';
+            }
+        }
+
         // Initialize
         initThree();
         initColorPickers();
+        checkAIStatus();
         fetchBuild();
     </script>
 </body>
