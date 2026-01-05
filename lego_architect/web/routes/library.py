@@ -347,16 +347,13 @@ async def import_set(set_num: str):
         build_state.name = f"{detail.name} ({set_num})"
         build_state.description = f"Imported from Rebrickable - {detail.num_parts} parts"
 
-        # Import parts
+        # Import parts - organize by part type then color for better visualization
         parts_imported = 0
         parts_skipped = 0
         warnings = []
 
-        # Grid placement for visualization
-        grid_x, grid_z = 0, 0
-        layer = 0
-        max_x = 20
-
+        # First, collect all importable parts grouped by part_id and color
+        grouped_parts = {}
         for part_entry in inventory.parts:
             # Skip spare parts
             if part_entry.is_spare:
@@ -373,37 +370,71 @@ async def import_set(set_num: str):
                     )
                 continue
 
-            # Map color
+            # Group key: (ldraw_id, color)
             ldraw_color = map_color(part_entry.color_id)
+            key = (part_info["ldraw_id"], ldraw_color)
 
-            # Get dimensions
+            if key not in grouped_parts:
+                grouped_parts[key] = {
+                    "part_info": part_info,
+                    "color": ldraw_color,
+                    "quantity": 0,
+                }
+            grouped_parts[key]["quantity"] += part_entry.quantity
+
+        # Sort groups by part size (larger first) then by color
+        sorted_groups = sorted(
+            grouped_parts.values(),
+            key=lambda g: (
+                -(g["part_info"]["width"] * g["part_info"]["length"]),  # Larger first
+                g["color"],
+            )
+        )
+
+        # Place parts in organized rows - each part type gets its own row
+        current_z = 0
+        current_layer = 0
+        max_x = 30  # Wider grid
+
+        for group in sorted_groups:
+            part_info = group["part_info"]
+            ldraw_color = group["color"]
+            quantity = group["quantity"]
+
             dimensions = PartDimensions(
                 studs_width=part_info["width"],
                 studs_length=part_info["length"],
                 plates_height=part_info["height"],
             )
 
-            # Add parts (quantity times)
-            for _ in range(part_entry.quantity):
+            # Start new row for this part type
+            grid_x = 0
+
+            for _ in range(quantity):
+                # Check if we need to wrap to next row
+                if grid_x + dimensions.studs_width > max_x:
+                    grid_x = 0
+                    current_z += dimensions.studs_length + 1
+
+                # Check if we need new layer
+                if current_z > 40:
+                    current_z = 0
+                    current_layer += 3
+
                 build_state.add_part(
                     part_id=part_info["ldraw_id"],
                     part_name=part_info["name"],
                     color=ldraw_color,
-                    position=StudCoordinate(grid_x, grid_z, layer),
+                    position=StudCoordinate(grid_x, current_z, current_layer),
                     rotation=Rotation(0),
                     dimensions=dimensions,
                 )
 
-                # Simple grid placement
                 grid_x += dimensions.studs_width + 1
-                if grid_x >= max_x:
-                    grid_x = 0
-                    grid_z += dimensions.studs_length + 1
-                    if grid_z >= 20:
-                        grid_z = 0
-                        layer += 3  # Move up one brick height
-
                 parts_imported += 1
+
+            # Move to next row after each part type
+            current_z += dimensions.studs_length + 2
 
         # Add summary warning if many parts skipped
         if parts_skipped > 0:

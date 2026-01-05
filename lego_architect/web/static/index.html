@@ -753,6 +753,78 @@
             color: #ff9800;
             margin-top: 5px;
         }
+
+        .import-info-notice {
+            background: rgba(33, 150, 243, 0.1);
+            border: 1px solid #2196f3;
+            border-radius: 4px;
+            padding: 10px;
+            font-size: 11px;
+            color: #2196f3;
+            margin: 10px 0;
+            line-height: 1.4;
+        }
+
+        /* Reference Image Panel */
+        .reference-panel {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(22, 33, 62, 0.95);
+            border-radius: 8px;
+            padding: 10px;
+            max-width: 200px;
+            z-index: 100;
+            display: none;
+        }
+
+        .reference-panel.show {
+            display: block;
+        }
+
+        .reference-panel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .reference-panel-title {
+            font-size: 11px;
+            color: #888;
+            text-transform: uppercase;
+        }
+
+        .reference-panel-close {
+            background: none;
+            border: none;
+            color: #888;
+            font-size: 16px;
+            cursor: pointer;
+            padding: 0;
+            width: auto;
+            margin: 0;
+        }
+
+        .reference-panel img {
+            width: 100%;
+            border-radius: 4px;
+            background: #fff;
+        }
+
+        .reference-panel-name {
+            font-size: 11px;
+            color: #fff;
+            margin-top: 8px;
+            text-align: center;
+        }
+
+        .reference-panel-note {
+            font-size: 10px;
+            color: #666;
+            margin-top: 4px;
+            text-align: center;
+        }
     </style>
 </head>
 <body>
@@ -1036,6 +1108,16 @@
             <div class="controls-hint">
                 Left-click + drag: Rotate | Right-click + drag: Pan | Scroll: Zoom
             </div>
+            <!-- Reference Image Panel for imported sets -->
+            <div class="reference-panel" id="reference-panel">
+                <div class="reference-panel-header">
+                    <span class="reference-panel-title">Reference</span>
+                    <button class="reference-panel-close" onclick="hideReferencePanel()">&times;</button>
+                </div>
+                <img id="reference-panel-img" src="" alt="Reference">
+                <div class="reference-panel-name" id="reference-panel-name"></div>
+                <div class="reference-panel-note">Parts imported as inventory</div>
+            </div>
         </div>
     </div>
 
@@ -1071,9 +1153,15 @@
                 <div class="loading-spinner">Loading parts...</div>
             </div>
 
+            <div class="import-info-notice">
+                <strong>Note:</strong> Imports parts as inventory grid, not assembled model.
+                Rebrickable provides parts lists only, not 3D assembly positions.
+                Use the imported parts to build manually or with AI Generate.
+            </div>
+
             <div class="modal-actions">
                 <button class="secondary" onclick="closeSetDetail()">Cancel</button>
-                <button onclick="importSelectedSet()" id="import-set-btn">Import as New Build</button>
+                <button onclick="importSelectedSet()" id="import-set-btn">Import Parts Inventory</button>
             </div>
         </div>
     </div>
@@ -1514,6 +1602,7 @@
                 showToast('Build cleared');
                 fetchBuild();
                 document.getElementById('validation-results').innerHTML = '';
+                hideReferencePanel();
             }
         }
 
@@ -1872,10 +1961,13 @@
             selectedSetInventory = null;
         }
 
+        // Store current set info for reference panel
+        let currentSetInfo = null;
+
         async function importSelectedSet() {
             if (!selectedSetNum) return;
 
-            if (!confirm('This will replace your current build. Continue?')) {
+            if (!confirm('Import parts inventory?\n\nNote: Parts will be laid out in a grid (not assembled). Use this as your parts palette to build from.')) {
                 return;
             }
 
@@ -1884,6 +1976,10 @@
             btn.disabled = true;
 
             try {
+                // Get set detail for reference panel
+                const detailRes = await fetch(`/api/library/sets/${selectedSetNum}`);
+                const detail = await detailRes.json();
+
                 const res = await fetch(`/api/library/sets/${selectedSetNum}/import`, {
                     method: 'POST'
                 });
@@ -1891,9 +1987,15 @@
                 const result = await res.json();
 
                 if (result.success) {
-                    showToast(`Imported ${result.parts_imported} parts!`);
+                    showToast(`Imported ${result.parts_imported} parts as inventory`);
                     closeSetDetail();
                     fetchBuild();
+
+                    // Show reference panel with set image
+                    if (detail.success && detail.img_url) {
+                        currentSetInfo = detail;
+                        showReferencePanel(detail.img_url, detail.name);
+                    }
 
                     // Show warnings if any
                     if (result.warnings && result.warnings.length > 0) {
@@ -1905,9 +2007,24 @@
             } catch (e) {
                 showToast('Import failed: ' + e.message, 'error');
             } finally {
-                btn.textContent = 'Import as New Build';
+                btn.textContent = 'Import Parts Inventory';
                 btn.disabled = false;
             }
+        }
+
+        function showReferencePanel(imgUrl, name) {
+            const panel = document.getElementById('reference-panel');
+            const img = document.getElementById('reference-panel-img');
+            const nameEl = document.getElementById('reference-panel-name');
+
+            img.src = imgUrl;
+            nameEl.textContent = name;
+            panel.classList.add('show');
+        }
+
+        function hideReferencePanel() {
+            document.getElementById('reference-panel').classList.remove('show');
+            currentSetInfo = null;
         }
 
         // Instruction Viewer
