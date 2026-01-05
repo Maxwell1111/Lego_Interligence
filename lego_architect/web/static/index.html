@@ -460,6 +460,299 @@
             justify-content: space-between;
             padding: 2px 0;
         }
+
+        /* Library Styles */
+        .library-status {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 12px;
+            background: #0f3460;
+            border-radius: 4px;
+            margin-bottom: 10px;
+            font-size: 12px;
+        }
+
+        .library-status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+        }
+
+        .library-status-dot.available {
+            background: #4caf50;
+        }
+
+        .library-status-dot.unavailable {
+            background: #ff9800;
+        }
+
+        .library-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            max-height: 350px;
+            overflow-y: auto;
+            margin-bottom: 10px;
+        }
+
+        .set-card {
+            background: #1a1a2e;
+            border-radius: 8px;
+            padding: 10px;
+            cursor: pointer;
+            transition: border-color 0.2s, background 0.2s;
+            border: 2px solid transparent;
+        }
+
+        .set-card:hover {
+            border-color: #e94560;
+        }
+
+        .set-card.selected {
+            border-color: #e94560;
+            background: #0f3460;
+        }
+
+        .set-thumbnail {
+            width: 100%;
+            height: 70px;
+            object-fit: contain;
+            background: #fff;
+            border-radius: 4px;
+            margin-bottom: 8px;
+        }
+
+        .set-name {
+            font-size: 11px;
+            font-weight: 600;
+            color: #fff;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .set-meta {
+            font-size: 10px;
+            color: #888;
+            margin-top: 2px;
+        }
+
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+            margin-top: 10px;
+        }
+
+        .pagination button {
+            width: auto;
+            padding: 6px 12px;
+            font-size: 12px;
+        }
+
+        .pagination span {
+            font-size: 12px;
+            color: #888;
+        }
+
+        .library-disabled-notice {
+            background: rgba(255, 152, 0, 0.1);
+            border: 1px solid #ff9800;
+            border-radius: 4px;
+            padding: 10px;
+            font-size: 12px;
+            color: #ff9800;
+            margin-bottom: 10px;
+        }
+
+        .loading-spinner {
+            text-align: center;
+            padding: 20px;
+            color: #888;
+        }
+
+        /* Set Detail Modal */
+        #set-detail-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.8);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #set-detail-modal.show {
+            display: flex;
+        }
+
+        .set-detail-header {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .set-detail-img {
+            width: 150px;
+            height: 150px;
+            object-fit: contain;
+            background: #fff;
+            border-radius: 8px;
+        }
+
+        .set-detail-info {
+            flex: 1;
+        }
+
+        .set-detail-info p {
+            margin: 5px 0;
+            font-size: 13px;
+        }
+
+        .parts-preview {
+            max-height: 200px;
+            overflow-y: auto;
+            margin-bottom: 15px;
+        }
+
+        .part-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 5px;
+            border-bottom: 1px solid #0f3460;
+        }
+
+        .part-row img {
+            width: 40px;
+            height: 40px;
+            object-fit: contain;
+            background: #fff;
+            border-radius: 4px;
+        }
+
+        .part-row .part-info {
+            flex: 1;
+            font-size: 12px;
+        }
+
+        .part-row .part-qty {
+            font-weight: bold;
+            color: #e94560;
+        }
+
+        .part-row.unmappable {
+            opacity: 0.5;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .modal-actions button {
+            flex: 1;
+        }
+
+        /* Instruction Viewer Modal */
+        #instruction-viewer-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.9);
+            z-index: 1001;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #instruction-viewer-modal.show {
+            display: flex;
+        }
+
+        .instruction-viewer-content {
+            max-width: 800px;
+            width: 95%;
+            max-height: 90vh;
+        }
+
+        .step-navigation {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+            margin-bottom: 15px;
+        }
+
+        .step-navigation button {
+            width: auto;
+            padding: 8px 20px;
+        }
+
+        .layer-viewer {
+            background: #1a1a2e;
+            border-radius: 8px;
+            min-height: 300px;
+        }
+
+        .layer-info {
+            padding: 10px 15px;
+            background: #0f3460;
+            border-radius: 4px 4px 0 0;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .layer-parts-list {
+            max-height: 300px;
+            overflow-y: auto;
+            padding: 10px;
+        }
+
+        .progress-bar-container {
+            padding: 15px;
+        }
+
+        .progress-bar {
+            height: 6px;
+            background: #0f3460;
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: #e94560;
+            transition: width 0.3s;
+        }
+
+        .import-summary {
+            background: #0f3460;
+            border-radius: 4px;
+            padding: 10px;
+            margin-top: 10px;
+        }
+
+        .import-summary p {
+            margin: 5px 0;
+            font-size: 12px;
+        }
+
+        .warning-list {
+            max-height: 100px;
+            overflow-y: auto;
+            font-size: 11px;
+            color: #ff9800;
+            margin-top: 5px;
+        }
     </style>
 </head>
 <body>
@@ -488,6 +781,7 @@
                 <button class="tab" data-tab="ai" id="ai-tab-btn">AI Generate</button>
                 <button class="tab active" data-tab="patterns">Patterns</button>
                 <button class="tab" data-tab="manual">Manual</button>
+                <button class="tab" data-tab="library">Library</button>
             </div>
 
             <div id="ai-tab" class="tab-content">
@@ -668,6 +962,63 @@
                 </div>
             </div>
 
+            <div id="library-tab" class="tab-content">
+                <div class="library-status" id="library-status">
+                    <div class="library-status-dot" id="library-status-dot"></div>
+                    <span id="library-status-text">Checking library...</span>
+                </div>
+
+                <div class="library-disabled-notice hidden" id="library-disabled-notice">
+                    Library features require a Rebrickable API key. Add REBRICKABLE_API_KEY to your .env file.
+                </div>
+
+                <div class="section" id="library-search-section">
+                    <h3>Search LEGO Sets</h3>
+                    <label>Search by name or set number</label>
+                    <input type="text" id="library-search" placeholder="e.g., Millennium Falcon or 75192">
+
+                    <div class="row">
+                        <div>
+                            <label>Theme</label>
+                            <select id="library-theme">
+                                <option value="">All Themes</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label>Year</label>
+                            <select id="library-year">
+                                <option value="">All Years</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div>
+                            <label>Min Parts</label>
+                            <input type="number" id="library-min-parts" placeholder="0" min="0">
+                        </div>
+                        <div>
+                            <label>Max Parts</label>
+                            <input type="number" id="library-max-parts" placeholder="10000" min="0">
+                        </div>
+                    </div>
+
+                    <button onclick="searchLibrary()">Search Sets</button>
+                </div>
+
+                <div class="section" id="library-results-section">
+                    <h3>Results <span id="results-count"></span></h3>
+                    <div class="library-grid" id="library-grid">
+                        <div class="loading-spinner">Enter search criteria above</div>
+                    </div>
+                    <div class="pagination" id="library-pagination" style="display: none;">
+                        <button onclick="prevLibraryPage()" id="library-prev-btn" disabled>Previous</button>
+                        <span id="library-page-info">Page 1</span>
+                        <button onclick="nextLibraryPage()" id="library-next-btn" disabled>Next</button>
+                    </div>
+                </div>
+            </div>
+
             <h3>Actions</h3>
             <button onclick="validateBuild()">Validate Build</button>
             <button class="secondary" onclick="showBom()">View BOM</button>
@@ -695,6 +1046,67 @@
                 <button class="modal-close" onclick="closeBom()">&times;</button>
             </div>
             <div id="bom-content"></div>
+        </div>
+    </div>
+
+    <!-- Set Detail Modal -->
+    <div id="set-detail-modal">
+        <div class="modal-content" style="max-width: 650px;">
+            <div class="modal-header">
+                <h3 id="set-detail-title">Set Details</h3>
+                <button class="modal-close" onclick="closeSetDetail()">&times;</button>
+            </div>
+            <div class="set-detail-header">
+                <img id="set-detail-img" class="set-detail-img" src="" alt="Set Image">
+                <div class="set-detail-info">
+                    <p><strong>Set Number:</strong> <span id="set-detail-num"></span></p>
+                    <p><strong>Year:</strong> <span id="set-detail-year"></span></p>
+                    <p><strong>Parts:</strong> <span id="set-detail-parts"></span></p>
+                    <p id="set-detail-mappable"><strong>Importable:</strong> <span id="set-detail-mappable-count"></span></p>
+                </div>
+            </div>
+
+            <h4>Parts Preview</h4>
+            <div class="parts-preview" id="parts-preview">
+                <div class="loading-spinner">Loading parts...</div>
+            </div>
+
+            <div class="modal-actions">
+                <button class="secondary" onclick="closeSetDetail()">Cancel</button>
+                <button onclick="importSelectedSet()" id="import-set-btn">Import as New Build</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Instruction Viewer Modal -->
+    <div id="instruction-viewer-modal">
+        <div class="modal-content instruction-viewer-content">
+            <div class="modal-header">
+                <h3>Building Steps</h3>
+                <button class="modal-close" onclick="closeInstructionViewer()">&times;</button>
+            </div>
+
+            <div class="step-navigation">
+                <button onclick="prevStep()" id="prev-step-btn" disabled>Previous</button>
+                <span id="step-counter">Step 1 of 1</span>
+                <button onclick="nextStep()" id="next-step-btn">Next</button>
+            </div>
+
+            <div class="layer-viewer">
+                <div class="layer-info">
+                    <strong>Layer <span id="current-layer">1</span></strong>
+                    <span id="layer-parts-count">0 parts</span>
+                </div>
+                <div class="layer-parts-list" id="layer-parts-list">
+                    <!-- Parts for current layer -->
+                </div>
+            </div>
+
+            <div class="progress-bar-container">
+                <div class="progress-bar">
+                    <div class="progress-fill" id="instruction-progress-fill" style="width: 0%"></div>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -1210,10 +1622,390 @@
             }
         }
 
+        // Library functionality
+        let libraryAvailable = false;
+        let currentSearchParams = { page: 1, page_size: 20 };
+        let currentSearchResults = { sets: [], total_count: 0, has_more: false };
+        let selectedSetNum = null;
+        let selectedSetInventory = null;
+
+        async function checkLibraryStatus() {
+            try {
+                const res = await fetch('/api/library/status');
+                const status = await res.json();
+
+                const dot = document.getElementById('library-status-dot');
+                const text = document.getElementById('library-status-text');
+                const notice = document.getElementById('library-disabled-notice');
+                const searchSection = document.getElementById('library-search-section');
+
+                if (status.library_available) {
+                    dot.className = 'library-status-dot available';
+                    text.textContent = 'Library Ready';
+                    libraryAvailable = true;
+                    notice.classList.add('hidden');
+                    searchSection.classList.remove('hidden');
+                } else {
+                    dot.className = 'library-status-dot unavailable';
+                    text.textContent = 'Library Unavailable';
+                    libraryAvailable = false;
+                    notice.classList.remove('hidden');
+                }
+            } catch (e) {
+                const dot = document.getElementById('library-status-dot');
+                const text = document.getElementById('library-status-text');
+                dot.className = 'library-status-dot unavailable';
+                text.textContent = 'Library Status Unknown';
+                libraryAvailable = false;
+            }
+        }
+
+        async function loadThemes() {
+            if (!libraryAvailable) return;
+
+            try {
+                const res = await fetch('/api/library/themes');
+                const data = await res.json();
+
+                if (data.success && data.themes) {
+                    const select = document.getElementById('library-theme');
+                    // Keep the first "All Themes" option
+                    select.innerHTML = '<option value="">All Themes</option>';
+
+                    // Add popular themes first
+                    const popularThemes = ['Star Wars', 'City', 'Technic', 'Creator', 'Harry Potter', 'Marvel', 'Ninjago'];
+                    const sortedThemes = data.themes.sort((a, b) => {
+                        const aPopular = popularThemes.includes(a.name);
+                        const bPopular = popularThemes.includes(b.name);
+                        if (aPopular && !bPopular) return -1;
+                        if (!aPopular && bPopular) return 1;
+                        return a.name.localeCompare(b.name);
+                    });
+
+                    sortedThemes.forEach(theme => {
+                        const option = document.createElement('option');
+                        option.value = theme.id;
+                        option.textContent = theme.name;
+                        select.appendChild(option);
+                    });
+                }
+            } catch (e) {
+                console.error('Failed to load themes:', e);
+            }
+
+            // Populate years
+            const yearSelect = document.getElementById('library-year');
+            const currentYear = new Date().getFullYear();
+            for (let year = currentYear; year >= 1980; year--) {
+                const option = document.createElement('option');
+                option.value = year;
+                option.textContent = year;
+                yearSelect.appendChild(option);
+            }
+        }
+
+        async function searchLibrary() {
+            if (!libraryAvailable) {
+                showToast('Library features not available', 'error');
+                return;
+            }
+
+            const grid = document.getElementById('library-grid');
+            grid.innerHTML = '<div class="loading-spinner">Searching...</div>';
+
+            const search = document.getElementById('library-search').value.trim();
+            const theme_id = document.getElementById('library-theme').value;
+            const year = document.getElementById('library-year').value;
+            const min_parts = document.getElementById('library-min-parts').value;
+            const max_parts = document.getElementById('library-max-parts').value;
+
+            currentSearchParams = {
+                search: search || null,
+                theme_id: theme_id ? parseInt(theme_id) : null,
+                min_year: year ? parseInt(year) : null,
+                max_year: year ? parseInt(year) : null,
+                min_parts: min_parts ? parseInt(min_parts) : null,
+                max_parts: max_parts ? parseInt(max_parts) : null,
+                page: 1,
+                page_size: 20
+            };
+
+            await fetchLibraryResults();
+        }
+
+        async function fetchLibraryResults() {
+            const grid = document.getElementById('library-grid');
+
+            try {
+                const res = await fetch('/api/library/search', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(currentSearchParams)
+                });
+
+                const data = await res.json();
+
+                if (data.success) {
+                    currentSearchResults = data;
+                    renderSetCards(data.sets);
+                    updatePagination(data);
+                    document.getElementById('results-count').textContent = `(${data.total_count} found)`;
+                } else {
+                    grid.innerHTML = `<div class="loading-spinner">${data.error || 'Search failed'}</div>`;
+                }
+            } catch (e) {
+                grid.innerHTML = '<div class="loading-spinner">Search failed. Please try again.</div>';
+            }
+        }
+
+        function renderSetCards(sets) {
+            const grid = document.getElementById('library-grid');
+
+            if (sets.length === 0) {
+                grid.innerHTML = '<div class="loading-spinner">No sets found. Try different search criteria.</div>';
+                return;
+            }
+
+            grid.innerHTML = sets.map(set => `
+                <div class="set-card" onclick="showSetDetail('${set.set_num}')">
+                    <img class="set-thumbnail" src="${set.img_url || '/static/no-image.png'}"
+                         alt="${set.name}" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect fill=%22%23333%22 width=%22100%22 height=%22100%22/><text x=%2250%22 y=%2255%22 fill=%22%23666%22 text-anchor=%22middle%22>No Image</text></svg>'">
+                    <div class="set-name" title="${set.name}">${set.name}</div>
+                    <div class="set-meta">${set.set_num} | ${set.year} | ${set.num_parts} parts</div>
+                </div>
+            `).join('');
+        }
+
+        function updatePagination(data) {
+            const pagination = document.getElementById('library-pagination');
+            const prevBtn = document.getElementById('library-prev-btn');
+            const nextBtn = document.getElementById('library-next-btn');
+            const pageInfo = document.getElementById('library-page-info');
+
+            if (data.total_count > data.page_size) {
+                pagination.style.display = 'flex';
+                const totalPages = Math.ceil(data.total_count / data.page_size);
+                pageInfo.textContent = `Page ${data.page} of ${totalPages}`;
+                prevBtn.disabled = data.page <= 1;
+                nextBtn.disabled = !data.has_more;
+            } else {
+                pagination.style.display = 'none';
+            }
+        }
+
+        async function prevLibraryPage() {
+            if (currentSearchParams.page > 1) {
+                currentSearchParams.page--;
+                document.getElementById('library-grid').innerHTML = '<div class="loading-spinner">Loading...</div>';
+                await fetchLibraryResults();
+            }
+        }
+
+        async function nextLibraryPage() {
+            if (currentSearchResults.has_more) {
+                currentSearchParams.page++;
+                document.getElementById('library-grid').innerHTML = '<div class="loading-spinner">Loading...</div>';
+                await fetchLibraryResults();
+            }
+        }
+
+        async function showSetDetail(setNum) {
+            selectedSetNum = setNum;
+            document.getElementById('set-detail-modal').classList.add('show');
+            document.getElementById('parts-preview').innerHTML = '<div class="loading-spinner">Loading parts...</div>';
+
+            try {
+                // Fetch set details and inventory in parallel
+                const [detailRes, inventoryRes] = await Promise.all([
+                    fetch(`/api/library/sets/${setNum}`),
+                    fetch(`/api/library/sets/${setNum}/inventory`)
+                ]);
+
+                const detail = await detailRes.json();
+                const inventory = await inventoryRes.json();
+
+                if (detail.success) {
+                    document.getElementById('set-detail-title').textContent = detail.name;
+                    document.getElementById('set-detail-num').textContent = detail.set_num;
+                    document.getElementById('set-detail-year').textContent = detail.year;
+                    document.getElementById('set-detail-parts').textContent = detail.num_parts;
+                    document.getElementById('set-detail-img').src = detail.img_url || '';
+                }
+
+                if (inventory.success) {
+                    selectedSetInventory = inventory;
+                    document.getElementById('set-detail-mappable-count').textContent =
+                        `${inventory.mappable_parts} of ${inventory.total_parts} parts`;
+
+                    // Render parts preview (first 30 parts)
+                    const preview = document.getElementById('parts-preview');
+                    const partsToShow = inventory.parts.slice(0, 30);
+
+                    preview.innerHTML = partsToShow.map(part => `
+                        <div class="part-row ${part.is_mappable ? '' : 'unmappable'}">
+                            <img src="${part.img_url || ''}" alt="${part.part_name}"
+                                 onerror="this.style.display='none'">
+                            <div class="part-info">
+                                <div>${part.part_name}</div>
+                                <div style="color: #${part.color_rgb}">${part.color_name}</div>
+                            </div>
+                            <div class="part-qty">x${part.quantity}</div>
+                        </div>
+                    `).join('');
+
+                    if (inventory.parts.length > 30) {
+                        preview.innerHTML += `<div class="loading-spinner">...and ${inventory.parts.length - 30} more parts</div>`;
+                    }
+                } else {
+                    document.getElementById('parts-preview').innerHTML =
+                        `<div class="loading-spinner">${inventory.error || 'Failed to load parts'}</div>`;
+                }
+            } catch (e) {
+                document.getElementById('parts-preview').innerHTML =
+                    '<div class="loading-spinner">Failed to load set details</div>';
+            }
+        }
+
+        function closeSetDetail() {
+            document.getElementById('set-detail-modal').classList.remove('show');
+            selectedSetNum = null;
+            selectedSetInventory = null;
+        }
+
+        async function importSelectedSet() {
+            if (!selectedSetNum) return;
+
+            if (!confirm('This will replace your current build. Continue?')) {
+                return;
+            }
+
+            const btn = document.getElementById('import-set-btn');
+            btn.textContent = 'Importing...';
+            btn.disabled = true;
+
+            try {
+                const res = await fetch(`/api/library/sets/${selectedSetNum}/import`, {
+                    method: 'POST'
+                });
+
+                const result = await res.json();
+
+                if (result.success) {
+                    showToast(`Imported ${result.parts_imported} parts!`);
+                    closeSetDetail();
+                    fetchBuild();
+
+                    // Show warnings if any
+                    if (result.warnings && result.warnings.length > 0) {
+                        console.log('Import warnings:', result.warnings);
+                    }
+                } else {
+                    showToast(result.message || 'Import failed', 'error');
+                }
+            } catch (e) {
+                showToast('Import failed: ' + e.message, 'error');
+            } finally {
+                btn.textContent = 'Import as New Build';
+                btn.disabled = false;
+            }
+        }
+
+        // Instruction Viewer
+        let instructionLayers = [];
+        let currentStep = 0;
+
+        function openInstructionViewer() {
+            // Group current build parts by Y position (layer)
+            const build = window.currentBuildParts || [];
+            if (build.length === 0) {
+                showToast('No parts in current build', 'error');
+                return;
+            }
+
+            // Group by Y position
+            const layerMap = {};
+            build.forEach(part => {
+                const y = part.y;
+                if (!layerMap[y]) {
+                    layerMap[y] = [];
+                }
+                layerMap[y].push(part);
+            });
+
+            // Sort layers by Y
+            instructionLayers = Object.keys(layerMap)
+                .map(Number)
+                .sort((a, b) => a - b)
+                .map(y => ({
+                    y: y,
+                    parts: layerMap[y]
+                }));
+
+            currentStep = 0;
+            updateInstructionView();
+            document.getElementById('instruction-viewer-modal').classList.add('show');
+        }
+
+        function closeInstructionViewer() {
+            document.getElementById('instruction-viewer-modal').classList.remove('show');
+        }
+
+        function updateInstructionView() {
+            const total = instructionLayers.length;
+            document.getElementById('step-counter').textContent = `Step ${currentStep + 1} of ${total}`;
+            document.getElementById('prev-step-btn').disabled = currentStep === 0;
+            document.getElementById('next-step-btn').disabled = currentStep >= total - 1;
+
+            const layer = instructionLayers[currentStep];
+            document.getElementById('current-layer').textContent = layer.y;
+            document.getElementById('layer-parts-count').textContent = `${layer.parts.length} parts`;
+
+            // Render parts for this layer
+            const partsList = document.getElementById('layer-parts-list');
+            partsList.innerHTML = layer.parts.map(part => `
+                <div class="part-row">
+                    <div class="part-info">
+                        <div>${part.part_name}</div>
+                        <div>Position: (${part.x}, ${part.z}, ${part.y})</div>
+                    </div>
+                </div>
+            `).join('');
+
+            // Update progress
+            const progress = ((currentStep + 1) / total) * 100;
+            document.getElementById('instruction-progress-fill').style.width = `${progress}%`;
+        }
+
+        function prevStep() {
+            if (currentStep > 0) {
+                currentStep--;
+                updateInstructionView();
+            }
+        }
+
+        function nextStep() {
+            if (currentStep < instructionLayers.length - 1) {
+                currentStep++;
+                updateInstructionView();
+            }
+        }
+
+        // Store build parts for instruction viewer
+        window.currentBuildParts = [];
+
+        // Override updateUI to store parts
+        const originalUpdateUI = updateUI;
+        updateUI = function(build) {
+            originalUpdateUI(build);
+            window.currentBuildParts = build.parts || [];
+        };
+
         // Initialize
         initThree();
         initColorPickers();
         checkAIStatus();
+        checkLibraryStatus();
+        loadThemes();
         fetchBuild();
     </script>
 </body>

@@ -7,7 +7,7 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
 from pathlib import Path
 
-from lego_architect.web.routes import builds, patterns, validation, export, generate
+from lego_architect.web.routes import builds, patterns, validation, export, generate, library
 from lego_architect.config import Config
 
 
@@ -25,6 +25,7 @@ def create_app() -> FastAPI:
     app.include_router(validation.router, prefix="/api/validation", tags=["validation"])
     app.include_router(export.router, prefix="/api/export", tags=["export"])
     app.include_router(generate.router, prefix="/api/generate", tags=["generate"])
+    app.include_router(library.router, prefix="/api/library", tags=["library"])
 
     # Serve static files
     static_dir = Path(__file__).parent / "static"

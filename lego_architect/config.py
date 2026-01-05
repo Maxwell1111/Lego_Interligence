@@ -20,6 +20,10 @@ class Config:
     # Anthropic API
     ANTHROPIC_API_KEY: str = os.getenv("ANTHROPIC_API_KEY", "")
 
+    # Rebrickable API (for Global Build Library)
+    REBRICKABLE_API_KEY: str = os.getenv("REBRICKABLE_API_KEY", "")
+    REBRICKABLE_BASE_URL: str = "https://rebrickable.com/api/v3"
+
     # MongoDB
     MONGODB_URI: str = os.getenv("MONGODB_URI", "mongodb://localhost:27017/")
     MONGODB_DATABASE: str = os.getenv("MONGODB_DATABASE", "lego_architect")
@@ -54,6 +58,11 @@ class Config:
     def is_ai_available(cls) -> bool:
         """Check if AI features are available and properly configured."""
         return cls.ENABLE_AI_FEATURES and bool(cls.ANTHROPIC_API_KEY)
+
+    @classmethod
+    def is_library_available(cls) -> bool:
+        """Check if library features are available and properly configured."""
+        return bool(cls.REBRICKABLE_API_KEY)
 
 
 # Global config instance
