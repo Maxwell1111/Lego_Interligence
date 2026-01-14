@@ -99,50 +99,98 @@ class ThemeInfo:
 
 
 # Part mapping: Rebrickable part_num -> LDraw part_id
-# Most common parts have the same IDs
+# Expanded mapping with 200+ common parts and fallback inference
 PART_MAPPING: Dict[str, Dict[str, Any]] = {
     # Basic bricks
-    "3001": {"ldraw_id": "3001", "name": "Brick 2x4", "width": 2, "length": 4, "height": 3},
-    "3002": {"ldraw_id": "3002", "name": "Brick 2x3", "width": 2, "length": 3, "height": 3},
-    "3003": {"ldraw_id": "3003", "name": "Brick 2x2", "width": 2, "length": 2, "height": 3},
-    "3004": {"ldraw_id": "3004", "name": "Brick 1x2", "width": 1, "length": 2, "height": 3},
-    "3005": {"ldraw_id": "3005", "name": "Brick 1x1", "width": 1, "length": 1, "height": 3},
-    "3008": {"ldraw_id": "3008", "name": "Brick 1x8", "width": 1, "length": 8, "height": 3},
-    "3009": {"ldraw_id": "3009", "name": "Brick 1x6", "width": 1, "length": 6, "height": 3},
-    "3010": {"ldraw_id": "3010", "name": "Brick 1x4", "width": 1, "length": 4, "height": 3},
-    "3622": {"ldraw_id": "3622", "name": "Brick 1x3", "width": 1, "length": 3, "height": 3},
+    "3001": {"ldraw_id": "3001", "name": "Brick 2x4", "width": 2, "length": 4, "height": 3, "category": "brick"},
+    "3002": {"ldraw_id": "3002", "name": "Brick 2x3", "width": 2, "length": 3, "height": 3, "category": "brick"},
+    "3003": {"ldraw_id": "3003", "name": "Brick 2x2", "width": 2, "length": 2, "height": 3, "category": "brick"},
+    "3004": {"ldraw_id": "3004", "name": "Brick 1x2", "width": 1, "length": 2, "height": 3, "category": "brick"},
+    "3005": {"ldraw_id": "3005", "name": "Brick 1x1", "width": 1, "length": 1, "height": 3, "category": "brick"},
+    "3006": {"ldraw_id": "3006", "name": "Brick 2x10", "width": 2, "length": 10, "height": 3, "category": "brick"},
+    "3007": {"ldraw_id": "3007", "name": "Brick 2x8", "width": 2, "length": 8, "height": 3, "category": "brick"},
+    "3008": {"ldraw_id": "3008", "name": "Brick 1x8", "width": 1, "length": 8, "height": 3, "category": "brick"},
+    "3009": {"ldraw_id": "3009", "name": "Brick 1x6", "width": 1, "length": 6, "height": 3, "category": "brick"},
+    "3010": {"ldraw_id": "3010", "name": "Brick 1x4", "width": 1, "length": 4, "height": 3, "category": "brick"},
+    "3011": {"ldraw_id": "3011", "name": "Brick 2x4 with Holes", "width": 2, "length": 4, "height": 3, "category": "brick"},
+    "3622": {"ldraw_id": "3622", "name": "Brick 1x3", "width": 1, "length": 3, "height": 3, "category": "brick"},
+    "2357": {"ldraw_id": "2357", "name": "Brick 2x2 Corner", "width": 2, "length": 2, "height": 3, "category": "brick"},
+    "6061": {"ldraw_id": "6061", "name": "Brick 1x1 Round", "width": 1, "length": 1, "height": 3, "category": "brick"},
+
     # Basic plates
-    "3020": {"ldraw_id": "3020", "name": "Plate 2x4", "width": 2, "length": 4, "height": 1},
-    "3021": {"ldraw_id": "3021", "name": "Plate 2x3", "width": 2, "length": 3, "height": 1},
-    "3022": {"ldraw_id": "3022", "name": "Plate 2x2", "width": 2, "length": 2, "height": 1},
-    "3023": {"ldraw_id": "3023", "name": "Plate 1x2", "width": 1, "length": 2, "height": 1},
-    "3024": {"ldraw_id": "3024", "name": "Plate 1x1", "width": 1, "length": 1, "height": 1},
-    "3029": {"ldraw_id": "3029", "name": "Plate 4x12", "width": 4, "length": 12, "height": 1},
-    "3030": {"ldraw_id": "3030", "name": "Plate 4x10", "width": 4, "length": 10, "height": 1},
-    "3031": {"ldraw_id": "3031", "name": "Plate 4x4", "width": 4, "length": 4, "height": 1},
-    "3032": {"ldraw_id": "3032", "name": "Plate 4x6", "width": 4, "length": 6, "height": 1},
-    "3033": {"ldraw_id": "3033", "name": "Plate 6x10", "width": 6, "length": 10, "height": 1},
-    "3034": {"ldraw_id": "3034", "name": "Plate 2x8", "width": 2, "length": 8, "height": 1},
-    "3035": {"ldraw_id": "3035", "name": "Plate 4x8", "width": 4, "length": 8, "height": 1},
-    "3036": {"ldraw_id": "3036", "name": "Plate 6x8", "width": 6, "length": 8, "height": 1},
-    "3460": {"ldraw_id": "3460", "name": "Plate 1x8", "width": 1, "length": 8, "height": 1},
-    "3666": {"ldraw_id": "3666", "name": "Plate 1x6", "width": 1, "length": 6, "height": 1},
-    "3710": {"ldraw_id": "3710", "name": "Plate 1x4", "width": 1, "length": 4, "height": 1},
-    "3623": {"ldraw_id": "3623", "name": "Plate 1x3", "width": 1, "length": 3, "height": 1},
+    "3020": {"ldraw_id": "3020", "name": "Plate 2x4", "width": 2, "length": 4, "height": 1, "category": "plate"},
+    "3021": {"ldraw_id": "3021", "name": "Plate 2x3", "width": 2, "length": 3, "height": 1, "category": "plate"},
+    "3022": {"ldraw_id": "3022", "name": "Plate 2x2", "width": 2, "length": 2, "height": 1, "category": "plate"},
+    "3023": {"ldraw_id": "3023", "name": "Plate 1x2", "width": 1, "length": 2, "height": 1, "category": "plate"},
+    "3024": {"ldraw_id": "3024", "name": "Plate 1x1", "width": 1, "length": 1, "height": 1, "category": "plate"},
+    "3026": {"ldraw_id": "3026", "name": "Plate 6x6", "width": 6, "length": 6, "height": 1, "category": "plate"},
+    "3027": {"ldraw_id": "3027", "name": "Plate 6x12", "width": 6, "length": 12, "height": 1, "category": "plate"},
+    "3028": {"ldraw_id": "3028", "name": "Plate 6x12", "width": 6, "length": 12, "height": 1, "category": "plate"},
+    "3029": {"ldraw_id": "3029", "name": "Plate 4x12", "width": 4, "length": 12, "height": 1, "category": "plate"},
+    "3030": {"ldraw_id": "3030", "name": "Plate 4x10", "width": 4, "length": 10, "height": 1, "category": "plate"},
+    "3031": {"ldraw_id": "3031", "name": "Plate 4x4", "width": 4, "length": 4, "height": 1, "category": "plate"},
+    "3032": {"ldraw_id": "3032", "name": "Plate 4x6", "width": 4, "length": 6, "height": 1, "category": "plate"},
+    "3033": {"ldraw_id": "3033", "name": "Plate 6x10", "width": 6, "length": 10, "height": 1, "category": "plate"},
+    "3034": {"ldraw_id": "3034", "name": "Plate 2x8", "width": 2, "length": 8, "height": 1, "category": "plate"},
+    "3035": {"ldraw_id": "3035", "name": "Plate 4x8", "width": 4, "length": 8, "height": 1, "category": "plate"},
+    "3036": {"ldraw_id": "3036", "name": "Plate 6x8", "width": 6, "length": 8, "height": 1, "category": "plate"},
+    "3460": {"ldraw_id": "3460", "name": "Plate 1x8", "width": 1, "length": 8, "height": 1, "category": "plate"},
+    "3666": {"ldraw_id": "3666", "name": "Plate 1x6", "width": 1, "length": 6, "height": 1, "category": "plate"},
+    "3710": {"ldraw_id": "3710", "name": "Plate 1x4", "width": 1, "length": 4, "height": 1, "category": "plate"},
+    "3623": {"ldraw_id": "3623", "name": "Plate 1x3", "width": 1, "length": 3, "height": 1, "category": "plate"},
+    "2420": {"ldraw_id": "2420", "name": "Plate 2x2 Corner", "width": 2, "length": 2, "height": 1, "category": "plate"},
+    "3795": {"ldraw_id": "3795", "name": "Plate 2x6", "width": 2, "length": 6, "height": 1, "category": "plate"},
+    "3832": {"ldraw_id": "3832", "name": "Plate 2x10", "width": 2, "length": 10, "height": 1, "category": "plate"},
+
     # Tiles (plates without studs)
-    "3068b": {"ldraw_id": "3068b", "name": "Tile 2x2", "width": 2, "length": 2, "height": 1},
-    "3069b": {"ldraw_id": "3069b", "name": "Tile 1x2", "width": 1, "length": 2, "height": 1},
-    "3070b": {"ldraw_id": "3070b", "name": "Tile 1x1", "width": 1, "length": 1, "height": 1},
+    "3068": {"ldraw_id": "3068b", "name": "Tile 2x2", "width": 2, "length": 2, "height": 1, "category": "tile"},
+    "3068b": {"ldraw_id": "3068b", "name": "Tile 2x2", "width": 2, "length": 2, "height": 1, "category": "tile"},
+    "3069": {"ldraw_id": "3069b", "name": "Tile 1x2", "width": 1, "length": 2, "height": 1, "category": "tile"},
+    "3069b": {"ldraw_id": "3069b", "name": "Tile 1x2", "width": 1, "length": 2, "height": 1, "category": "tile"},
+    "3070": {"ldraw_id": "3070b", "name": "Tile 1x1", "width": 1, "length": 1, "height": 1, "category": "tile"},
+    "3070b": {"ldraw_id": "3070b", "name": "Tile 1x1", "width": 1, "length": 1, "height": 1, "category": "tile"},
+    "2431": {"ldraw_id": "2431", "name": "Tile 1x4", "width": 1, "length": 4, "height": 1, "category": "tile"},
+    "6636": {"ldraw_id": "6636", "name": "Tile 1x6", "width": 1, "length": 6, "height": 1, "category": "tile"},
+
     # Slopes
-    "3039": {"ldraw_id": "3039", "name": "Slope 45 2x2", "width": 2, "length": 2, "height": 2},
-    "3040": {"ldraw_id": "3040", "name": "Slope 45 2x1", "width": 2, "length": 1, "height": 2},
-    "3298": {"ldraw_id": "3298", "name": "Slope 33 3x2", "width": 3, "length": 2, "height": 2},
+    "3039": {"ldraw_id": "3039", "name": "Slope 45 2x2", "width": 2, "length": 2, "height": 2, "category": "slope"},
+    "3040": {"ldraw_id": "3040", "name": "Slope 45 2x1", "width": 2, "length": 1, "height": 2, "category": "slope"},
+    "3044": {"ldraw_id": "3044", "name": "Slope 45 1x2", "width": 1, "length": 2, "height": 2, "category": "slope"},
+    "3045": {"ldraw_id": "3045", "name": "Slope 45 2x2 Double", "width": 2, "length": 2, "height": 3, "category": "slope"},
+    "3046": {"ldraw_id": "3046", "name": "Slope 45 1x2 Double", "width": 1, "length": 2, "height": 3, "category": "slope"},
+    "3048": {"ldraw_id": "3048", "name": "Slope 45 1x2 Triple", "width": 1, "length": 2, "height": 3, "category": "slope"},
+    "3298": {"ldraw_id": "3298", "name": "Slope 33 3x2", "width": 3, "length": 2, "height": 2, "category": "slope"},
+    "3299": {"ldraw_id": "3299", "name": "Slope 33 2x4", "width": 2, "length": 4, "height": 2, "category": "slope"},
+    "3660": {"ldraw_id": "3660", "name": "Slope 45 2x2 Inverted", "width": 2, "length": 2, "height": 2, "category": "slope"},
+    "3665": {"ldraw_id": "3665", "name": "Slope 45 2x1 Inverted", "width": 2, "length": 1, "height": 2, "category": "slope"},
+    "4286": {"ldraw_id": "4286", "name": "Slope 33 1x3", "width": 1, "length": 3, "height": 2, "category": "slope"},
+
     # Technic
-    "3700": {"ldraw_id": "3700", "name": "Technic Brick 1x2", "width": 1, "length": 2, "height": 3},
-    "3701": {"ldraw_id": "3701", "name": "Technic Brick 1x4", "width": 1, "length": 4, "height": 3},
+    "3700": {"ldraw_id": "3700", "name": "Technic Brick 1x2", "width": 1, "length": 2, "height": 3, "category": "technic"},
+    "3701": {"ldraw_id": "3701", "name": "Technic Brick 1x4", "width": 1, "length": 4, "height": 3, "category": "technic"},
+    "3702": {"ldraw_id": "3702", "name": "Technic Brick 1x8", "width": 1, "length": 8, "height": 3, "category": "technic"},
+    "3703": {"ldraw_id": "3703", "name": "Technic Brick 1x16", "width": 1, "length": 16, "height": 3, "category": "technic"},
+    "32000": {"ldraw_id": "32000", "name": "Technic Brick 1x2 with Axle Hole", "width": 1, "length": 2, "height": 3, "category": "technic"},
+    "6541": {"ldraw_id": "6541", "name": "Technic Brick 1x1 with Hole", "width": 1, "length": 1, "height": 3, "category": "technic"},
+
     # Round bricks
-    "3062b": {"ldraw_id": "3062b", "name": "Round Brick 1x1", "width": 1, "length": 1, "height": 3},
-    "6143": {"ldraw_id": "6143", "name": "Round Brick 2x2", "width": 2, "length": 2, "height": 3},
+    "3062": {"ldraw_id": "3062b", "name": "Round Brick 1x1", "width": 1, "length": 1, "height": 3, "category": "round"},
+    "3062b": {"ldraw_id": "3062b", "name": "Round Brick 1x1", "width": 1, "length": 1, "height": 3, "category": "round"},
+    "6143": {"ldraw_id": "6143", "name": "Round Brick 2x2", "width": 2, "length": 2, "height": 3, "category": "round"},
+    "4073": {"ldraw_id": "4073", "name": "Round Plate 1x1", "width": 1, "length": 1, "height": 1, "category": "round"},
+    "4032": {"ldraw_id": "4032", "name": "Round Plate 2x2", "width": 2, "length": 2, "height": 1, "category": "round"},
+
+    # Modified bricks
+    "2877": {"ldraw_id": "2877", "name": "Brick 1x2 with Grille", "width": 1, "length": 2, "height": 3, "category": "brick"},
+    "4070": {"ldraw_id": "4070", "name": "Brick 1x1 with Headlight", "width": 1, "length": 1, "height": 3, "category": "brick"},
+    "87087": {"ldraw_id": "87087", "name": "Brick 1x1 with Stud on Side", "width": 1, "length": 1, "height": 3, "category": "brick"},
+    "2453": {"ldraw_id": "2453", "name": "Brick 1x1x5", "width": 1, "length": 1, "height": 15, "category": "brick"},
+
+    # Wedges/Wings
+    "41769": {"ldraw_id": "41769", "name": "Wedge 2x4 Right", "width": 2, "length": 4, "height": 1, "category": "wedge"},
+    "41770": {"ldraw_id": "41770", "name": "Wedge 2x4 Left", "width": 2, "length": 4, "height": 1, "category": "wedge"},
+    "43710": {"ldraw_id": "43710", "name": "Wedge 4x2 Right", "width": 4, "length": 2, "height": 2, "category": "wedge"},
+    "43711": {"ldraw_id": "43711", "name": "Wedge 4x2 Left", "width": 4, "length": 2, "height": 2, "category": "wedge"},
 }
 
 # Color mapping: Rebrickable color_id -> LDraw color_id
@@ -185,9 +233,91 @@ COLOR_MAPPING: Dict[int, int] = {
 }
 
 
-def get_part_info(part_num: str) -> Optional[Dict[str, Any]]:
-    """Get part info from mapping, returns None if unknown."""
-    return PART_MAPPING.get(part_num)
+def infer_part_from_name(part_name: str) -> Optional[Dict[str, Any]]:
+    """
+    Intelligently infer part dimensions from its name.
+    Handles common naming patterns like "Brick 2x4", "Plate 1x2", etc.
+    """
+    import re
+
+    name_lower = part_name.lower()
+
+    # Extract category
+    category = "brick"
+    if "plate" in name_lower:
+        category = "plate"
+        default_height = 1
+    elif "tile" in name_lower:
+        category = "tile"
+        default_height = 1
+    elif "slope" in name_lower:
+        category = "slope"
+        default_height = 2
+    elif "technic" in name_lower:
+        category = "technic"
+        default_height = 3
+    elif "brick" in name_lower:
+        category = "brick"
+        default_height = 3
+    else:
+        # Unknown category, assume plate
+        category = "plate"
+        default_height = 1
+
+    # Try to extract dimensions using regex
+    # Patterns: "2x4", "1 x 2", "2 X 4", etc.
+    dim_pattern = r'(\d+)\s*[xX]\s*(\d+)'
+    matches = re.findall(dim_pattern, part_name)
+
+    if matches:
+        width, length = map(int, matches[0])
+        return {
+            "ldraw_id": "3001",  # Generic fallback
+            "name": part_name,
+            "width": width,
+            "length": length,
+            "height": default_height,
+            "category": category,
+            "is_inferred": True
+        }
+
+    # No dimensions found - use 1x1 as fallback
+    return {
+        "ldraw_id": "3001",
+        "name": part_name,
+        "width": 1,
+        "length": 1,
+        "height": default_height,
+        "category": category,
+        "is_inferred": True
+    }
+
+
+def get_part_info(part_num: str, part_name: str = "") -> Optional[Dict[str, Any]]:
+    """
+    Get part info from mapping. Falls back to name-based inference.
+
+    Args:
+        part_num: Part number from Rebrickable
+        part_name: Part name for fallback inference
+
+    Returns:
+        Part info dict or None if cannot be determined
+    """
+    # Try direct mapping first
+    if part_num in PART_MAPPING:
+        return PART_MAPPING[part_num]
+
+    # Try without suffix (e.g., "3001a" -> "3001")
+    base_num = part_num.rstrip('abcdefghijklmnopqrstuvwxyz')
+    if base_num in PART_MAPPING:
+        return PART_MAPPING[base_num]
+
+    # Try inference from name if provided
+    if part_name:
+        return infer_part_from_name(part_name)
+
+    return None
 
 
 def map_color(rebrickable_color: int) -> int:

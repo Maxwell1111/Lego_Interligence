@@ -252,7 +252,7 @@ async def get_set_inventory(set_num: str):
         mappable_count = 0
         parts = []
         for p in inventory.parts:
-            is_mappable = get_part_info(p.part_num) is not None
+            is_mappable = get_part_info(p.part_num, p.part_name) is not None
             if is_mappable:
                 mappable_count += p.quantity
 
@@ -359,8 +359,8 @@ async def import_set(set_num: str):
             if part_entry.is_spare:
                 continue
 
-            # Get part mapping
-            part_info = get_part_info(part_entry.part_num)
+            # Get part mapping (with fallback inference)
+            part_info = get_part_info(part_entry.part_num, part_entry.part_name)
 
             if part_info is None:
                 parts_skipped += part_entry.quantity
@@ -369,6 +369,12 @@ async def import_set(set_num: str):
                         f"Unknown part: {part_entry.part_num} ({part_entry.part_name}) x{part_entry.quantity}"
                     )
                 continue
+
+            # Note if part was inferred
+            if part_info.get("is_inferred") and len(warnings) < 20:
+                warnings.append(
+                    f"Approximated: {part_entry.part_name} (dimensions inferred from name)"
+                )
 
             # Group key: (ldraw_id, color)
             ldraw_color = map_color(part_entry.color_id)

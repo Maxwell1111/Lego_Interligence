@@ -6,6 +6,8 @@
     <title>LEGO Architect</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+    <script src="/static/lego_geometry.js"></script>
+    <script src="/static/lego_renderer.js"></script>
     <style>
         * {
             margin: 0;
@@ -825,6 +827,60 @@
             margin-top: 4px;
             text-align: center;
         }
+
+        /* Render Progress Indicator */
+        .render-progress-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+        }
+
+        .render-progress-overlay.show {
+            display: flex;
+        }
+
+        .render-progress-content {
+            background: #16213e;
+            padding: 30px;
+            border-radius: 8px;
+            text-align: center;
+            min-width: 300px;
+        }
+
+        .render-progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #0f3460;
+            border-radius: 4px;
+            overflow: hidden;
+            margin: 15px 0;
+        }
+
+        .render-progress-fill {
+            height: 100%;
+            background: #e94560;
+            transition: width 0.3s;
+            width: 0%;
+        }
+
+        .render-progress-text {
+            font-size: 14px;
+            color: #aaa;
+            margin-bottom: 10px;
+        }
+
+        .render-progress-stats {
+            font-size: 12px;
+            color: #666;
+            margin-top: 10px;
+        }
     </style>
 </head>
 <body>
@@ -1200,6 +1256,17 @@
 
     <div class="toast" id="toast"></div>
 
+    <!-- Render Progress Overlay -->
+    <div class="render-progress-overlay" id="render-progress-overlay">
+        <div class="render-progress-content">
+            <div class="render-progress-text" id="render-progress-text">Rendering parts...</div>
+            <div class="render-progress-bar">
+                <div class="render-progress-fill" id="render-progress-fill"></div>
+            </div>
+            <div class="render-progress-stats" id="render-progress-stats">0 / 0 parts</div>
+        </div>
+    </div>
+
     <script>
         // LEGO color definitions (LDraw color codes)
         const COLORS = {
@@ -1226,10 +1293,32 @@
         // Three.js setup
         let scene, camera, renderer, controls;
         let brickMeshes = new Map();
+        let geometryLibrary;
+        let legoRenderer;
 
         function initThree() {
             scene = new THREE.Scene();
             scene.background = new THREE.Color(0x1a1a2e);
+
+            // Initialize geometry library and renderer
+            geometryLibrary = new LegoGeometryLibrary();
+            legoRenderer = new LegoRenderer(scene, geometryLibrary);
+
+            // Setup progress callback
+            legoRenderer.setProgressCallback((progress) => {
+                const overlay = document.getElementById('render-progress-overlay');
+                const fill = document.getElementById('render-progress-fill');
+                const text = document.getElementById('render-progress-text');
+                const stats = document.getElementById('render-progress-stats');
+
+                if (progress > 0 && progress < 100) {
+                    overlay.classList.add('show');
+                    fill.style.width = progress + '%';
+                    text.textContent = `Rendering parts... ${progress.toFixed(0)}%`;
+                } else {
+                    overlay.classList.remove('show');
+                }
+            });
 
             const container = document.getElementById('canvas-container');
             const width = container.clientWidth;
@@ -1284,78 +1373,18 @@
             renderer.render(scene, camera);
         }
 
-        function createBrickGeometry(width, length, height, hasStuds = true) {
-            const group = new THREE.Group();
-
-            // Main brick body
-            const bodyGeom = new THREE.BoxGeometry(width, height * 0.8, length);
-            const bodyMesh = new THREE.Mesh(bodyGeom);
-            bodyMesh.position.y = height * 0.4;
-            group.add(bodyMesh);
-
-            // Add studs on top
-            if (hasStuds && height >= 1) {
-                const studRadius = 0.3;
-                const studHeight = 0.2;
-                const studGeom = new THREE.CylinderGeometry(studRadius, studRadius, studHeight, 16);
-
-                for (let x = 0; x < width; x++) {
-                    for (let z = 0; z < length; z++) {
-                        const stud = new THREE.Mesh(studGeom);
-                        stud.position.set(
-                            x - (width - 1) / 2,
-                            height * 0.8 + studHeight / 2,
-                            z - (length - 1) / 2
-                        );
-                        group.add(stud);
-                    }
-                }
-            }
-
-            return group;
-        }
+        // Legacy functions replaced by LegoRenderer
+        // Keeping for backward compatibility if needed
 
         function addBrickToScene(part) {
-            const color = COLORS[part.color]?.hex || '#888888';
-            const material = new THREE.MeshPhongMaterial({
-                color: color,
-                shininess: 30
-            });
-
-            // Calculate dimensions considering rotation
-            let width = part.width;
-            let length = part.length;
-            if (part.rotation === 90 || part.rotation === 270) {
-                [width, length] = [length, width];
-            }
-
-            // Create brick geometry (scale: 1 unit = 1 stud)
-            const brick = createBrickGeometry(width, length, part.height / 3);
-
-            brick.traverse(child => {
-                if (child instanceof THREE.Mesh) {
-                    child.material = material;
-                    child.castShadow = true;
-                    child.receiveShadow = true;
-                }
-            });
-
-            // Position: convert stud coordinates to scene coordinates
-            brick.position.set(
-                part.x + width / 2,
-                part.y / 3, // Convert plates to brick units
-                part.z + length / 2
-            );
-
-            scene.add(brick);
-            brickMeshes.set(part.id, brick);
+            // Delegate to new renderer
+            return legoRenderer.addBrickToScene(part, COLORS);
         }
 
         function clearScene() {
-            brickMeshes.forEach((mesh, id) => {
-                scene.remove(mesh);
-            });
-            brickMeshes.clear();
+            // Delegate to new renderer
+            legoRenderer.clearScene();
+            brickMeshes.clear();  // Keep in sync for legacy code
         }
 
         // Initialize color pickers
@@ -1411,15 +1440,45 @@
             return build;
         }
 
-        function updateUI(build) {
+        async function updateUI(build) {
             document.getElementById('part-count').textContent = build.part_count;
             document.getElementById('dimensions').textContent =
                 `${build.dimensions[0]}x${build.dimensions[1]}x${build.dimensions[2]}`;
             document.getElementById('build-name').textContent = build.name;
 
-            // Update 3D scene
-            clearScene();
-            build.parts.forEach(part => addBrickToScene(part));
+            // Show loading indicator for large builds
+            if (build.parts && build.parts.length > 1000) {
+                showToast(`Rendering ${build.parts.length} parts...`, 'success');
+            }
+
+            // Update 3D scene with validation
+            try {
+                const result = await legoRenderer.renderBuild(build, COLORS);
+
+                if (!result.success) {
+                    console.warn('Rendering completed with errors:', result.errors);
+                    if (result.errors.length > 0) {
+                        showToast(
+                            `Rendered with ${result.errors.length} issues. Check console.`,
+                            'error'
+                        );
+                    }
+                } else if (result.partsRendered > 0) {
+                    if (result.duration && result.duration > 1000) {
+                        showToast(
+                            `Rendered ${result.partsRendered} parts in ${(result.duration/1000).toFixed(1)}s`,
+                            'success'
+                        );
+                    }
+                }
+
+                // Update legacy brickMeshes reference
+                brickMeshes = legoRenderer.brickMeshes;
+
+            } catch (error) {
+                console.error('Failed to render build:', error);
+                showToast('Failed to render build: ' + error.message, 'error');
+            }
         }
 
         async function createBase() {
@@ -2117,6 +2176,20 @@
             window.currentBuildParts = build.parts || [];
         };
 
+        // Cleanup on page unload
+        window.addEventListener('beforeunload', () => {
+            if (legoRenderer) {
+                legoRenderer.stopRendering();
+                legoRenderer.clearScene();
+            }
+            if (geometryLibrary) {
+                geometryLibrary.clearCache();
+            }
+            if (renderer) {
+                renderer.dispose();
+            }
+        });
+
         // Initialize
         initThree();
         initColorPickers();
@@ -2124,6 +2197,12 @@
         checkLibraryStatus();
         loadThemes();
         fetchBuild();
+
+        // Log initialization success
+        console.log('LEGO Architect initialized successfully');
+        console.log('- Enhanced geometry rendering enabled');
+        console.log('- Data validation enabled');
+        console.log('- Lazy loading enabled for large builds (1000+ parts)');
     </script>
 </body>
 </html>
