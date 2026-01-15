@@ -1458,12 +1458,17 @@
                 const result = await legoRenderer.renderBuild(build, COLORS);
 
                 if (!result.success) {
-                    console.warn('Rendering completed with errors:', result.errors);
+                    console.warn('Rendering completed with warnings:', result.errors);
                     if (result.errors.length > 0) {
+                        // More informative message showing what was successfully rendered
+                        const total = build.parts.length;
+                        const rendered = result.partsRendered || 0;
+                        const skipped = total - rendered;
                         showToast(
-                            `Rendered with ${result.errors.length} issues. Check console.`,
+                            `Rendered ${rendered}/${total} parts (${skipped} skipped - unmapped/invalid parts)`,
                             'error'
                         );
+                        console.log(`Rendering issues (${result.errors.length}):`, result.errors.slice(0, 10));
                     }
                 } else if (result.partsRendered > 0) {
                     if (result.duration && result.duration > 1000) {

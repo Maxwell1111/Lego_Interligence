@@ -281,9 +281,9 @@ def infer_part_from_name(part_name: str) -> Optional[Dict[str, Any]]:
             "is_inferred": True
         }
 
-    # No dimensions found - use 1x1 as fallback
+    # No dimensions found - use 1x1 as fallback with conservative defaults
     return {
-        "ldraw_id": "3001",
+        "ldraw_id": "3001",  # Generic brick fallback
         "name": part_name,
         "width": 1,
         "length": 1,

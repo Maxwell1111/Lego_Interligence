@@ -407,10 +407,20 @@ async def import_set(set_num: str):
             ldraw_color = group["color"]
             quantity = group["quantity"]
 
+            # Validate dimensions before creating PartDimensions
+            width = part_info.get("width", 1)
+            length = part_info.get("length", 1)
+            height = part_info.get("height", 1)
+
+            # Ensure all dimensions are positive integers
+            if width <= 0 or length <= 0 or height <= 0:
+                warnings.append(f"Invalid dimensions for {part_info.get('name', 'unknown')}: {width}x{length}x{height}, using 1x1x1")
+                width, length, height = 1, 1, 1
+
             dimensions = PartDimensions(
-                studs_width=part_info["width"],
-                studs_length=part_info["length"],
-                plates_height=part_info["height"],
+                studs_width=width,
+                studs_length=length,
+                plates_height=height,
             )
 
             # Start new row for this part type

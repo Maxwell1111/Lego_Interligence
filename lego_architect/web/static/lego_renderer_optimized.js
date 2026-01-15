@@ -60,9 +60,9 @@ class OptimizedLegoRenderer {
         if (typeof part.z !== 'number') errors.push(`Part ${part.id} has invalid z`);
         if (!part.color) errors.push(`Part ${part.id} missing color`);
 
-        if (!part.width || part.width <= 0) errors.push(`Part ${part.id} invalid width`);
-        if (!part.length || part.length <= 0) errors.push(`Part ${part.id} invalid length`);
-        if (!part.height || part.height <= 0) errors.push(`Part ${part.id} invalid height`);
+        if (!part.width || part.width <= 0) errors.push(`Part ${part.id} (${part.part_name || 'unknown'}) invalid width: ${part.width}`);
+        if (!part.length || part.length <= 0) errors.push(`Part ${part.id} (${part.part_name || 'unknown'}) invalid length: ${part.length}`);
+        if (!part.height || part.height <= 0) errors.push(`Part ${part.id} (${part.part_name || 'unknown'}) invalid height: ${part.height}`);
 
         if (Math.abs(part.x) > 10000) errors.push(`Part ${part.id} x out of range`);
         if (Math.abs(part.y) > 10000) errors.push(`Part ${part.id} y out of range`);
@@ -164,9 +164,10 @@ class OptimizedLegoRenderer {
         // Validate part data
         const validation = this.validatePartData(part);
         if (!validation.isValid) {
-            console.error(`Invalid part data:`, validation.errors);
+            console.warn(`Skipping invalid part:`, validation.errors);
             this.validationErrors.push(...validation.errors);
-            return null;
+            this.stats.partsCulled++;  // Count as culled rather than failed
+            return null;  // Skip this part gracefully
         }
 
         try {
