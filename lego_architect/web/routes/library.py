@@ -398,9 +398,9 @@ async def import_set(set_num: str):
         )
 
         # Place parts in organized rows - each part type gets its own row
+        # ALL parts placed on ground layer (plate_y = 0) to avoid validation errors
         current_z = 0
-        current_layer = 0
-        max_x = 30  # Wider grid
+        max_x = 50  # Wider grid to accommodate more parts on single layer
 
         for group in sorted_groups:
             part_info = group["part_info"]
@@ -422,16 +422,12 @@ async def import_set(set_num: str):
                     grid_x = 0
                     current_z += dimensions.studs_length + 1
 
-                # Check if we need new layer
-                if current_z > 40:
-                    current_z = 0
-                    current_layer += 3
-
+                # All parts on ground layer (plate_y = 0) for inventory view
                 build_state.add_part(
                     part_id=part_info["ldraw_id"],
                     part_name=part_info["name"],
                     color=ldraw_color,
-                    position=StudCoordinate(grid_x, current_z, current_layer),
+                    position=StudCoordinate(grid_x, current_z, 0),
                     rotation=Rotation(0),
                     dimensions=dimensions,
                 )
